@@ -1,0 +1,8 @@
+{
+  "name": "react-gym-ai-planner-server",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "echo \"Server workspace initialized. Add backend code here.\""
+  }
+}

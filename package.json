@@ -1,0 +1,15 @@
+{
+  "name": "react-gym-ai-planner",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "Client",
+    "Server"
+  ],
+  "scripts": {
+    "dev": "npm --workspace Client run dev",
+    "build": "npm --workspace Client run build",
+    "lint": "npm --workspace Client run lint",
+    "start:server": "npm --workspace Server run start"
+  }
+}
