@@ -12,15 +12,21 @@ import { api } from "../lib/api";
 
 interface AuthContextType {
   user: User | null;
-  isLoading: Boolean | true;
+  isLoading: boolean;
+  profile: UserProfile | null;
+  plan: any | null;
   saveProfile: (profile:Omit<UserProfile, "userId" | 'updatedAt'>) => Promise<void>;
+  generatePlan: () => Promise<void>;
+  fetchProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [neonUser, setNeonUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<Boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [plan, setPlan] = useState<any | null>(null);
 
   useEffect(() => {
     (async function loadUser() {
@@ -44,12 +50,30 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("User must be authenticated to save profile");
     }
     
-    await api.saveProfile(neonUser.id, profileData);
-    
+    const response = await api.saveProfile(neonUser.id, profileData);
+    setProfile(response.profile);
+  }
+
+  async function fetchProfile() {
+    if (!neonUser) return;
+    try {
+      const response = await api.getProfile(neonUser.id);
+      setProfile(response);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+    }
+  }
+
+  async function generatePlan() {
+    if (!neonUser) {
+      throw new Error("User must be authenticated to generate plan");
+    }
+    const response = await api.generatePlan(neonUser.id);
+    setPlan(response.plan);
   }
   
   return (
-    <AuthContext.Provider value={{ user: neonUser, isLoading, saveProfile }}>
+    <AuthContext.Provider value={{ user: neonUser, isLoading, profile, plan, saveProfile, generatePlan, fetchProfile }}>
       {children}
     </AuthContext.Provider>
   );

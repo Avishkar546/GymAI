@@ -3,23 +3,34 @@ import { prisma } from "../../lib/prisma.js";
 
 const profileRouter = Router();
 
-profileRouter.post("/", async (req: Request, res: Response) => {
+// GET profile
+profileRouter.get("/:userId", async (req: Request, res: Response) => {
   try {
-    const { userId, profileData } = req.body;
+    const { userId } = req.params;
 
-    if (!userId) {
-      return res.json({ status: 401, message: "bad request" });
+    const profile = await prisma.user_profiles.findUnique({
+      where: { user_id: userId },
+    });
+
+    if (!profile) {
+      return res.status(404).json({ error: "Profile not found" });
     }
 
-    const {
-      goal,
-      experience,
-      daysPerWeek,
-      sessionLength,
-      equipment,
-      injuries,
-      preferredSplit,
-    } = profileData;
+    res.status(200).json(profile);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    res.status(500).json({ error: "Failed to fetch profile" });
+  }
+});
+
+// POST/UPSERT profile
+profileRouter.post("/", async (req: Request, res: Response) => {
+  try {
+    const { userId, goal, experience, daysPerWeek, sessionLength, equipment, injuries, preferredSplit } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ message: "bad request" });
+    }
 
     if (
       !goal ||
@@ -27,13 +38,12 @@ profileRouter.post("/", async (req: Request, res: Response) => {
       !daysPerWeek ||
       !sessionLength ||
       !equipment ||
-      !injuries ||
-      !preferredSplit
+      preferredSplit === undefined
     ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    await prisma.user_profiles.upsert({
+    const profile = await prisma.user_profiles.upsert({
       where: { user_id: userId },
       update: {
         goal,
@@ -56,7 +66,8 @@ profileRouter.post("/", async (req: Request, res: Response) => {
         preferred_split: preferredSplit,
       },
     });
-    res.status(201).json("message:User created successfully");
+
+    res.status(201).json({ message: "Profile saved successfully", profile });
   } catch (error) {
     console.error("Error saving profile:", error);
     res.status(500).json({ error: "Failed to save profile" });

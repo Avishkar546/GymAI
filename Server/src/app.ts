@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import profileRouter from './routes/profile.routes.js';
+import planRouter from './routes/plan.routes.js';
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/profile", profileRouter);
+app.use("/api/plan", planRouter);
 
 export default app;

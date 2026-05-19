@@ -7,6 +7,7 @@ import { Textarea } from "../component/ui/Textarea";
 import { Button } from "../component/ui/Button";
 import { ArrowRight, Loader2 } from "lucide-react";
 import type { UserProfile } from "../types";
+import { useNavigate } from "react-router-dom";
 
 const goalOptions = [
   { value: "bulk", label: "Build Muscle (Bulk)" },
@@ -51,8 +52,10 @@ const splitOptions = [
 ];
 
 const Onboarding = () => {
-  const { user, saveProfile } = useAuth();
-  const [isGenerating, setGenerating] = useState<Boolean>(false);
+  const { user, saveProfile, generatePlan } = useAuth();
+  const navigate = useNavigate();
+  const [isGenerating, setGenerating] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   const [formData, setFormData] = useState({
     goal: "bulk",
@@ -72,8 +75,9 @@ const Onboarding = () => {
     return <RedirectToSignIn />;
   }
 
-  async function handleQuestionnarie(e:React.SubmitEvent) {
+  async function handleQuestionnarie(e:React.FormEvent) {
     e.preventDefault();
+    setError("");
 
     const profile: Omit<UserProfile, "userId" | "updatedAt"> = {
       goal: formData.goal as UserProfile["goal"],
@@ -86,11 +90,14 @@ const Onboarding = () => {
     };
 
     try {
-      await saveProfile(profile);
       setGenerating(true);
-      
+      await saveProfile(profile);
+      await generatePlan();
+      // Redirect to profile page
+      navigate("/profile");
     } catch (error) {
-      
+      setError((error as Error).message || "Failed to save profile");
+      setGenerating(false);
     }
   }
 
@@ -98,11 +105,11 @@ const Onboarding = () => {
     <SignedIn>
       <div className="min-h-screen pt-24 pb-12 px-6">
         <div className="max-w-xl mx-auto">
-          {/* progress indicator */}
           {!isGenerating? 
           (<Card variant="bordered">
             <h1 className="text-2xl font-bold mb-2">Tell Us About Yourself</h1>
             <p className="text-[var(--color-muted)] mb-6">Help us create the perfect plan</p>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
             <form onSubmit={handleQuestionnarie}>
               <Select id="goal" label="What is your primary goal"
               options={goalOptions} 

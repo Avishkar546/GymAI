@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const { user } = useAuth();
-  console.log("user: ", user);
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/80 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -20,14 +19,31 @@ export default function Navbar() {
 
         <nav>
           {user ? (
-            <>
+            <div className="flex items-center gap-2">
               <Link to="/profile">
                 <Button variant="ghost" size="sm">
                   My Plan
                 </Button>
               </Link>
-              <UserButton className="bg-(--color-accent)" />
-            </>
+              <Link to="/account/profile">
+                <Button variant="ghost" size="sm">
+                  Account
+                </Button>
+              </Link>
+              <UserButton />
+            </div>
+          ) : (
+            <Link to="/auth/sign-in">
+              <Button variant="primary" size="sm">
+                Sign In
+              </Button>
+            </Link>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}
           ) : (
             <>
               <Link to="/auth/sign-in">
