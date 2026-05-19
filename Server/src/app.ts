@@ -9,7 +9,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors())
 
-app.use("/api/profile", profileRouter);
+app.get('/', (req, res) => {
+  res.send('Hello, TypeScript Express!');
+});
 
+app.use("/api/profile", profileRouter);
 
 export default app;

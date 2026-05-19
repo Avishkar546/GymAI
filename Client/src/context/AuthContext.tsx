@@ -7,10 +7,13 @@ import {
 } from "react";
 import { authClient } from "../lib/auth";
 import type { User } from "@neondatabase/neon-js/auth/types";
+import type { UserProfile } from "../types";
+import { api } from "../lib/api";
 
 interface AuthContextType {
   user: User | null;
   isLoading: Boolean | true;
+  saveProfile: (profile:Omit<UserProfile, "userId" | 'updatedAt'>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -35,8 +38,18 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
     })();
   }, []);
+
+  async function saveProfile(profileData:Omit<UserProfile, "userId" | 'updatedAt'>) {
+    if(!neonUser) {
+      throw new Error("User must be authenticated to save profile");
+    }
+    
+    await api.saveProfile(neonUser.id, profileData);
+    
+  }
+  
   return (
-    <AuthContext.Provider value={{ user: neonUser, isLoading }}>
+    <AuthContext.Provider value={{ user: neonUser, isLoading, saveProfile }}>
       {children}
     </AuthContext.Provider>
   );

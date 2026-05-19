@@ -1,41 +1,19 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    // File Layout
-    "rootDir": "./src",
+    "target": "EsNext",
+    "module": "node16",
+    "lib": ["ES2022"],
+    "moduleResolution": "node16",
+    "rootDir": "./",
     "outDir": "./dist",
-
-    // Environment Settings
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "target": "esnext",
-    "lib": ["esnext"],
-    "types": ["node"],
-
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    // Compilation / module support
+    "strict": false,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true
-  }, 
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "dist"]
 }
