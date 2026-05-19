@@ -44,20 +44,3 @@ export default function Navbar() {
     </header>
   );
 }
-          ) : (
-            <>
-              <Link to="/auth/sign-in">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/auth/sign-up">
-                <Button size="sm">Sign Up</Button>
-              </Link>
-            </>
-          )}
-        </nav>
-      </div>
-    </header>
-  );
-}
